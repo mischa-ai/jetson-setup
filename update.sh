@@ -34,7 +34,7 @@ updatedb
 git clone https://github.com/Pyrestone/jetson-fan-ctl.git
 cd jetson-fan-ctl/
 ./install.sh
-service automagic-fan status
+# service automagic-fan status
 
 # install jtop
 pip3 install -U jetson-stats
@@ -45,4 +45,4 @@ chmod 664 /etc/systemd/system/disable-wifi-power-management.service
 chown root:root /etc/systemd/system/disable-wifi-power-management.service
 systemctl enable disable-wifi-power-management.service
 systemctl start disable-wifi-power-management.service
-service disable-wifi-power-management status
+# service disable-wifi-power-management status
