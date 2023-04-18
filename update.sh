@@ -31,3 +31,7 @@ newgrp docker
 updatedb
 
 pip3 install -U jetson-stats
+
+# install the wifi power manager disable service
+systemctl enable disable-wifi-power-management.service
+systemctl start disable-wifi-power-management.service
