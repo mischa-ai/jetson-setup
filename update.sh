@@ -1,40 +1,61 @@
-apt autoremove libreoffice*
+#!/bin/bash
 
-apt remove docker docker-engine docker.io containerd runc
-rm -rf /var/lib/docker/
+set -e
+set -x
+
+if [ "$EUID" -ne 0 ]
+  then echo "Please run this script as root"
+  exit
+fi
+
+apt autoremove libreoffice*
 
 add-apt-repository ppa:git-core/ppa
 
 apt clean
 apt update
-apt upgrade
+apt upgrade -y
 
-apt install \
+apt install -y \
     htop \
-    locate\
+    locate \
     ca-certificates \
     curl \
     gnupg \
     lsb-release
 
-mkdir -m 0755 -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# Check if Docker is up-to-date
+installed_version=$(docker version --format '{{.Server.Version}}')
+architecture=$(dpkg --print-architecture)
+repo_url="https://download.docker.com/linux/ubuntu/dists/$(lsb_release -cs)/pool/stable/${architecture}/"
+latest_version=$(curl -s "${repo_url}" | grep -oP "docker-ce_\K.*(?=${architecture}.deb)" | sort -V | tail -n1)
+if [[ "${installed_version}" != "${latest_version}" ]]; then
+    echo "Docker is outdated (installed version: ${installed_version}, latest version: ${latest_version})"
+    apt-get purge docker docker-engine docker.io containerd runc
+    rm -rf /var/lib/docker/
 
-groupadd docker
+    mkdir -m 0755 -p /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    apt update
+    apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+else
+    echo "Docker is up to date (version: ${installed_version})"
+fi
+
+if grep -q docker /etc/group; then
+    echo "docker group already exists"
+else
+    groupadd docker
+fi
+
 usermod -aG docker $USER
 newgrp docker
 updatedb
-
-# install jetson fan controll
-git clone https://github.com/Pyrestone/jetson-fan-ctl.git
-cd jetson-fan-ctl/
-./install.sh
-# service automagic-fan status
 
 # install jtop
 pip3 install -U jetson-stats
@@ -45,4 +66,13 @@ chmod 664 /etc/systemd/system/disable-wifi-power-management.service
 chown root:root /etc/systemd/system/disable-wifi-power-management.service
 systemctl enable disable-wifi-power-management.service
 systemctl start disable-wifi-power-management.service
-# service disable-wifi-power-management status
+# systemctl status disable-wifi-power-management
+
+# install jetson fan control
+cd ~
+git clone https://github.com/Pyrestone/jetson-fan-ctl.git
+cd jetson-fan-ctl/
+./install.sh
+# systemctl status automagic-fan
+
+set +x

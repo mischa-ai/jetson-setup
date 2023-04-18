@@ -19,6 +19,28 @@ Run it with sudo privileges:
 $ sudo ./update.sh
 ```
 
+### Important Note
+
+The update may fail with the following bootloader error:
+
+```
+...
+Starting bootloader post-install procedure.
+ERROR. Procedure for bootloader update FAILED.
+Cannot install package. Exiting...
+dpkg: error processing package nvidia-l4t-bootloader (--configure):
+  installed nvidia-l4t-bootloader package post-installation script subprocess returned error exit status 1
+...
+```
+
+Run this script if that error occurs:
+
+```
+sudo fix-update.sh
+```
+
+Read about the [solution](https://forums.developer.nvidia.com/t/solution-dpkg-error-processing-package-nvidia-l4t-bootloader-configure/208627).
+
 #### Test Docker
 
 The script will also create a `docker` group for the jetbot user as it's [good advise](https://docs.docker.com/engine/install/linux-postinstall/) to run docker without `sudo docker ...` all the time.
