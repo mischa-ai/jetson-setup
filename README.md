@@ -43,6 +43,21 @@ To test this, run `iwconfig` which will show if wifi power manager is _on_ .
 
 Also, run `nmcli device wifi list` to see a complete list of available WiFi Access Points. If it shows the current connection, the module is in power save mode and does not scan for available WiFi APs.
 
+## Automatic wifi connection
+
+When connecting the Jetson Nano via GUI to any WiFi AP, the connection is set only to the jetbot user, which requires a login to establish a WiFi connection after every boot. To connect the Jetson Nano automatically to a WiFi AP, comment out this line in the connection file:
+
+`sudo vim /etc/NetworkManager/system-connections/<SSID>`
+
+```
+[connection]
+id=SSID
+uuid=some-uuid-here
+type=wifi
+#permissions=user:jetbot:;  <== this line
+...
+```
+
 ## Disable docker logs
 
 Change docker log to `none` to save massive write operations on sd-card!
@@ -77,5 +92,3 @@ Run it with sudo privileges:
 ```
 $ sudo ./camera-override.sh
 ```
-
-
