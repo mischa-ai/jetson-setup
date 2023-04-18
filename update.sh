@@ -8,7 +8,9 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-apt autoremove -y libreoffice*
+if dpkg-query -Wf '${Status}' libreoffice | grep -q 'ok installed'; then
+  apt autoremove -y libreoffice*
+fi
 
 add-apt-repository -y ppa:git-core/ppa
 
@@ -22,6 +24,7 @@ apt install -y \
     ca-certificates \
     curl \
     gnupg \
+    python3-pip \
     lsb-release
 
 
