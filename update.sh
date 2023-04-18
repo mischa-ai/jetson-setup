@@ -56,7 +56,8 @@ else
     groupadd docker
 fi
 
-usermod -aG docker $USER
+usermod -aG docker jetbot
+newgrp docker
 
 # install jtop
 pip3 install -U jetson-stats
