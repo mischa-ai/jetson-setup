@@ -8,9 +8,9 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-apt autoremove libreoffice*
+apt autoremove -y libreoffice*
 
-add-apt-repository ppa:git-core/ppa
+add-apt-repository -y ppa:git-core/ppa
 
 apt clean
 apt update
@@ -29,7 +29,7 @@ apt install -y \
 installed_version=$(docker version --format '{{.Server.Version}}')
 architecture=$(dpkg --print-architecture)
 repo_url="https://download.docker.com/linux/ubuntu/dists/$(lsb_release -cs)/pool/stable/${architecture}/"
-latest_version=$(curl -s "${repo_url}" | grep -oP "docker-ce_\K.*(?=${architecture}.deb)" | sort -V | tail -n1)
+latest_version=$(curl -s "${repo_url}" | grep -oP "docker-ce_\K.*(?=${architecture}.deb)" | sed 's/-.*//g' | sort -V | tail -n1)
 if [[ "${installed_version}" != "${latest_version}" ]]; then
     echo "Docker is outdated (installed version: ${installed_version}, latest version: ${latest_version})"
     apt-get purge docker docker-engine docker.io containerd runc
