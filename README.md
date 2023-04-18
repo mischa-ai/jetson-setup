@@ -92,3 +92,17 @@ Run it with sudo privileges:
 ```
 $ sudo ./camera-override.sh
 ```
+
+## Enable/Disable Ubuntu GUI
+
+To enable the Ubuntu Gui (ie. to work with a screen):
+
+```
+sudo systemctl set-default graphical.target
+```
+
+To save resources, disable GUI:
+
+```
+sudo systemctl set-default multi-user.target
+```
