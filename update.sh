@@ -54,8 +54,6 @@ else
 fi
 
 usermod -aG docker $USER
-newgrp docker
-updatedb
 
 # install jtop
 pip3 install -U jetson-stats
@@ -74,5 +72,8 @@ git clone https://github.com/Pyrestone/jetson-fan-ctl.git
 cd jetson-fan-ctl/
 ./install.sh
 # systemctl status automagic-fan
+
+# update system database for locate
+updatedb
 
 set +x
