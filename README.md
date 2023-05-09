@@ -152,3 +152,15 @@ Edit the fstab file to look like this: `sudo vim /etc/fstab`
 UUID="e6a1db23-be63-4b39-b263-e68101bb179d" /media/jetbot-usb ext4 defaults                            0 2
 /media/jetbot-usb  /home/jetbot/jetbot-usb none           bind                                         0 0
 ```
+
+## Resize SD Card
+
+The sd card should be resized automatically at first boot. Though sometimes that does not happen ?!
+
+here is a fix:
+
+```
+sudo apt install cloud-utils
+sudo growpart /dev/mmcblk0 1
+sudo resize2fs /dev/mmcblk0p1
+```
