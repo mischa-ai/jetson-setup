@@ -128,3 +128,27 @@ To save resources, disable GUI:
 ```
 sudo systemctl set-default multi-user.target
 ```
+
+## Add USB device with static mount
+
+Create new `jetbot-usb` directory in `/media`:
+
+```
+sudo mkdir /media/jetbot-usb
+```
+
+Find out UUID of USB device:
+
+```
+sudo blkid
+```
+
+Edit the fstab file to look like this:
+
+```
+# <file system> <mount point>             <type>          <options>                               <dump> <pass>
+/dev/root            /                     ext4           defaults                                     0 1
+/swfile              none                  swap           sw                                           0 0
+UUID="e6a1db23-be63-4b39-b263-e68101bb179d" /media/jetbot-usb ext4 defaults                            0 2
+/media/jetbot-usb  /home/jetbot/jetbot-usb none           bind                                         0 0
+```
