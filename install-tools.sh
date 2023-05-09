@@ -1,7 +1,9 @@
 #!/bin/bash
 
+sudo python3 -m pip install --upgrade pip
+
 # install jtop
-sudo pip3 install -U jetson-stats
+sudo python3 -m pip install -U jetson-stats
 
 # install the wifi power manager disable service
 sudo cp disable-wifi-power-management.service /etc/systemd/system/
