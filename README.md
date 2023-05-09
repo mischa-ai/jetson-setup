@@ -16,7 +16,7 @@ The `update.sh` script will remove unused software and update other packages lik
 Run it with sudo privileges:
 
 ```
-$ sudo ./update.sh
+sudo ./update.sh
 ```
 
 ### Important Note
@@ -47,19 +47,21 @@ The script will also create a `docker` group for the jetbot user as it's [good a
 
 After the update, test docker with user (without sudo!) :
 
-`$ docker run hello-world`
+```
+docker run hello-world
+```
 
 If it doesnt work, restart jetson nano and try again.
 
 #### WiFi Setup
 
-Jetson Nano OS has a known and unsolved bug that WiFi Power Manager cannot be disabled permanently.
+Jetson Nano (as all Ubuntu) runs automatically in `power save mode` which leads to decreased wifi performance and sometimes even to problems with running robotic applications, because the connection is not stable or sometimes even disconnected.
 
-The problem is that Jetson Nano runs automatically in `power save mode` which leads to decreased wifi performance and sometimes even to problems with running robotic applications, because the connection is not stable or sometimes even disconnected.
+To disable that, open the file `/etc/NetworkManager/conf.d/default-wifi-powersave-on.conf` and set `wifi.powersave = 2`
 
-For example, the command `sudo iw dev wlan0 set power_save off` will shut down the power manager for the running system, but after reboot, it will be enabled again.
-
-The update script will also manage this with a service, which will run the above command on every boot.
+```
+sudo vim /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
+```
 
 To test this, run `iwconfig` which will show if wifi power manager is _on_ .
 
@@ -69,7 +71,9 @@ Also, run `nmcli device wifi list` to see a complete list of available WiFi Acce
 
 When connecting the Jetson Nano via GUI to any WiFi AP, the connection is set only to the jetbot user, which requires a login to establish a WiFi connection after every boot. To connect the Jetson Nano automatically to a WiFi AP, comment out this line in the connection file:
 
-`sudo vim /etc/NetworkManager/system-connections/<SSID>`
+```
+sudo vim /etc/NetworkManager/system-connections/<SSID>
+```
 
 ```
 [connection]
@@ -86,20 +90,28 @@ Change docker log to `none` to save massive write operations on sd-card!
 
 You can enable it again if there are docker issues to debug them ...
 
-`$ docker info --format '{{.LoggingDriver}}'`
+```
+docker info --format '{{.LoggingDriver}}'
+```
 
 Should output `json-file` (default log option), to change the configuration, open the config file:
 
-`$ sudo vim /etc/docker/daemon.json`
+```
+sudo vim /etc/docker/daemon.json`
+```
 
 and add (or change) this line in the configuration:
 
-`"log-driver": "none",`
+```
+"log-driver": "none",
+```
 
 then restart the docker service and check log format again:
 
-$ sudo service docker restart
-$ docker info --format '{{.LoggingDriver}}'
+```
+sudo service docker restart
+docker info --format '{{.LoggingDriver}}'
+```
 
 Should output `none` now.
 
@@ -112,7 +124,7 @@ The script `camera-override.sh` will install the required ISP file for that.
 Run it with sudo privileges:
 
 ```
-$ sudo ./camera-override.sh
+sudo ./camera-override.sh
 ```
 
 ## Enable/Disable Ubuntu GUI
