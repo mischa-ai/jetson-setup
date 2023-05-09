@@ -143,7 +143,7 @@ Find out UUID of USB device:
 sudo blkid
 ```
 
-Edit the fstab file to look like this:
+Edit the fstab file to look like this: `sudo vim /etc/fstab`
 
 ```
 # <file system> <mount point>             <type>          <options>                               <dump> <pass>
