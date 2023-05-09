@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ "$EUID" -ne 0 ]
+  then echo "Please run this script as root"
+  exit
+fi
+
 # Check if Docker is installed
 if command -v docker &> /dev/null; then
     echo "Warning: Docker is already installed. Checking for updates."
@@ -19,23 +24,23 @@ if command -v docker &> /dev/null; then
 else
     echo "Docker is not installed. Installing the latest version."
 
-    sudo mkdir -m 0755 -p /etc/apt/keyrings
-    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    sudo echo \
+    mkdir -m 0755 -p /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    echo \
       "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
       $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-    sudo apt update
-    sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    apt update
+    apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-    sudo systemctl enable docker
+    systemctl enable docker
 fi
 
 if grep -q docker /etc/group; then
     echo "docker group already exists"
 else
-    sudo groupadd docker
+    groupadd docker
 fi
 
-sudo usermod -aG docker jetbot
+usermod -aG docker jetbot
 newgrp docker
